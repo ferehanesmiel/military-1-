@@ -19,6 +19,7 @@ export const Layout = () => {
         <div className="flex-1">
           <Link to="/" className="block py-2 hover:text-stone-300">Dashboard</Link>
           <Link to="/personnel" className="block py-2 hover:text-stone-300">Personnel</Link>
+          <Link to="/units" className="block py-2 hover:text-stone-300">Units</Link>
           <Link to="/materials" className="block py-2 hover:text-stone-300">Materials</Link>
           <Link to="/analysis" className="block py-2 hover:text-stone-300">Analysis</Link>
           <Link to="/reports" className="block py-2 hover:text-stone-300">Reports</Link>

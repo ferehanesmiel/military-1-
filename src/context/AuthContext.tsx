@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db } from '../services/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -20,8 +20,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-        setUserData(userDoc.data());
+        const userRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        
+        if (userDoc.exists()) {
+          setUserData(userDoc.data());
+        } else {
+          // Create default user document if it doesn't exist
+          const defaultData = {
+            uid: currentUser.uid,
+            email: currentUser.email,
+            role: currentUser.email === 'esmielferehan@gmail.com' ? 'admin' : 'staff',
+            name: currentUser.displayName || 'New User'
+          };
+          await setDoc(userRef, defaultData);
+          setUserData(defaultData);
+        }
       } else {
         setUserData(null);
       }

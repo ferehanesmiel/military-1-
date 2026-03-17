@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../services/firebase';
+import { db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export const Analysis = () => {
-  const { userData } = useAuth();
+  const { user, loading, userData } = useAuth();
   const [personnel, setPersonnel] = useState<any[]>([]);
   const [units, setUnits] = useState<any[]>([]);
 
   useEffect(() => {
+    if (loading || !user) return;
+
     const unsubscribePersonnel = onSnapshot(collection(db, 'personnel'), (snapshot) => {
       setPersonnel(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, (error) => handleFirestoreError(error, OperationType.LIST, 'personnel'));
+
     const unsubscribeUnits = onSnapshot(collection(db, 'units'), (snapshot) => {
       setUnits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, (error) => handleFirestoreError(error, OperationType.LIST, 'units'));
+
     return () => { unsubscribePersonnel(); unsubscribeUnits(); };
-  }, []);
+  }, [user, loading]);
 
   const canViewAll = userData?.role === 'admin' || userData?.role === 'commander';
   

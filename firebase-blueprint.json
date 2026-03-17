@@ -1,60 +1,70 @@
 {
   "entities": {
-    "User": {
+    "user": {
       "title": "User",
-      "description": "User profile information.",
+      "description": "System user with role and basic info",
       "type": "object",
       "properties": {
-        "name": { "type": "string", "description": "User's full name." },
-        "email": { "type": "string", "description": "User's email address." },
-        "role": { "type": "string", "enum": ["admin", "commander", "officer", "staff"], "description": "User's role." },
-        "rank": { "type": "string", "description": "User's rank." },
-        "branchId": { "type": "string", "description": "ID of the military branch." },
-        "departmentId": { "type": "string", "description": "ID of the department." },
-        "reportsTo": { "type": "string", "description": "User ID of the superior." }
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "commander", "officer", "staff"] },
+        "rank": { "type": "string" },
+        "unitId": { "type": "string" }
       },
-      "required": ["name", "email", "role", "rank"]
+      "required": ["uid", "email", "role"]
     },
-    "Personnel": {
+    "personnel": {
       "title": "Personnel",
-      "description": "Military personnel information.",
+      "description": "Military personnel record",
       "type": "object",
       "properties": {
-        "name": { "type": "string", "description": "Personnel's full name." },
-        "rank": { "type": "string", "description": "Personnel's rank." },
-        "branch": { "type": "string", "description": "Personnel's branch." },
-        "department": { "type": "string", "description": "Personnel's department." },
-        "supervisorId": { "type": "string", "description": "ID of the supervisor." },
-        "userId": { "type": "string", "description": "ID of the linked user." },
-        "allSupervisors": { "type": "array", "items": { "type": "string" }, "description": "Array of all supervisor IDs in the chain." },
-        "status": { "type": "string", "description": "Personnel's status." }
+        "name": { "type": "string" },
+        "rank": { "type": "string" },
+        "branch": { "type": "string" },
+        "department": { "type": "string" },
+        "supervisorId": { "type": "string" },
+        "status": { "type": "string", "enum": ["Active", "Inactive"] },
+        "performanceScore": { "type": "number" },
+        "attendance": { "type": "number" },
+        "training": { "type": "number" },
+        "tasks": { "type": "number" },
+        "discipline": { "type": "number" }
       },
-      "required": ["name", "rank", "branch", "department", "status"]
+      "required": ["name", "rank", "branch", "department"]
     },
-    "Materials": {
-      "title": "Materials",
-      "description": "Military materials and equipment.",
+    "unit": {
+      "title": "Unit",
+      "description": "Military unit record",
       "type": "object",
       "properties": {
-        "name": { "type": "string", "description": "Material name." },
-        "type": { "type": "string", "description": "Material type." },
-        "quantity": { "type": "number", "description": "Current quantity." },
-        "assignedTo": { "type": "string", "description": "ID of person or unit assigned to." },
-        "condition": { "type": "string", "description": "Condition of the material." },
-        "location": { "type": "string", "description": "Storage location." },
-        "lastMaintenance": { "type": "string", "format": "date", "description": "Date of last maintenance." }
+        "name": { "type": "string" },
+        "commanderId": { "type": "string" },
+        "requiredPersonnel": { "type": "number" },
+        "readinessScore": { "type": "number" }
       },
-      "required": ["name", "type", "quantity", "condition", "location"]
+      "required": ["name"]
+    },
+    "material": {
+      "title": "Material",
+      "description": "Logistics and equipment record",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "quantity": { "type": "number" },
+        "assignedTo": { "type": "string" },
+        "condition": { "type": "string", "enum": ["Good", "Damaged", "Needs Maintenance"] },
+        "location": { "type": "string" },
+        "lastMaintenance": { "type": "string", "format": "date" }
+      },
+      "required": ["name", "type", "quantity"]
     }
   },
   "firestore": {
-    "/users/{userId}": {
-      "schema": { "$ref": "User" },
-      "description": "User profile documents."
-    },
-    "/personnel/{personnelId}": {
-      "schema": { "$ref": "Personnel" },
-      "description": "Personnel documents."
-    }
+    "/users/{uid}": { "schema": "user", "description": "User profiles" },
+    "/personnel/{personnelId}": { "schema": "personnel", "description": "Personnel records" },
+    "/units/{unitId}": { "schema": "unit", "description": "Unit records" },
+    "/materials/{materialId}": { "schema": "material", "description": "Material records" }
   }
 }
