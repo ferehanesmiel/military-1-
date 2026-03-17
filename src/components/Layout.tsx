@@ -19,6 +19,9 @@ export const Layout = () => {
         <div className="flex-1">
           <Link to="/" className="block py-2 hover:text-stone-300">Dashboard</Link>
           <Link to="/personnel" className="block py-2 hover:text-stone-300">Personnel</Link>
+          <Link to="/materials" className="block py-2 hover:text-stone-300">Materials</Link>
+          <Link to="/analysis" className="block py-2 hover:text-stone-300">Analysis</Link>
+          <Link to="/reports" className="block py-2 hover:text-stone-300">Reports</Link>
           {userData?.role === 'admin' && <Link to="/admin" className="block py-2 hover:text-stone-300">Admin Panel</Link>}
         </div>
         <button onClick={handleLogout} className="text-left hover:text-stone-300">Logout</button>

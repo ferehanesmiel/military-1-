@@ -30,6 +30,21 @@
         "status": { "type": "string", "description": "Personnel's status." }
       },
       "required": ["name", "rank", "branch", "department", "status"]
+    },
+    "Materials": {
+      "title": "Materials",
+      "description": "Military materials and equipment.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Material name." },
+        "type": { "type": "string", "description": "Material type." },
+        "quantity": { "type": "number", "description": "Current quantity." },
+        "assignedTo": { "type": "string", "description": "ID of person or unit assigned to." },
+        "condition": { "type": "string", "description": "Condition of the material." },
+        "location": { "type": "string", "description": "Storage location." },
+        "lastMaintenance": { "type": "string", "format": "date", "description": "Date of last maintenance." }
+      },
+      "required": ["name", "type", "quantity", "condition", "location"]
     }
   },
   "firestore": {
