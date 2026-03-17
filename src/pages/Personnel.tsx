@@ -115,9 +115,9 @@ export const Personnel = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Personnel Management</h1>
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold">Personnel Management</h1>
         {canAdd && !isFormOpen && (
           <button 
             onClick={() => setIsFormOpen(true)}
@@ -190,43 +190,46 @@ export const Personnel = () => {
         </select>
       </div>
 
-      <table className="w-full bg-white rounded-xl shadow-md mb-8">
-        <thead>
-          <tr className="border-b">
-            <th className="p-4 text-left">Name</th>
-            <th className="p-4 text-left">Rank</th>
-            <th className="p-4 text-left">Branch</th>
-            <th className="p-4 text-left">Department</th>
-            <th className="p-4 text-left">Status</th>
-            <th className="p-4 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredPersonnel.map(p => (
-            <tr key={p.id} className="border-b hover:bg-stone-50">
-              <td className="p-4">{p.name}</td>
-              <td className="p-4">{p.rank}</td>
-              <td className="p-4">{p.branch}</td>
-              <td className="p-4">{p.department}</td>
-              <td className="p-4">{p.status}</td>
-              <td className="p-4 flex gap-2">
-                {canEditRecord(p) ? (
-                  <>
-                    <button onClick={() => { 
-                      setEditingId(p.id); setName(p.name); setRank(p.rank); setBranch(p.branch); setDepartment(p.department); setSupervisorId(p.supervisorId || ''); setStatus(p.status);
-                      setAttendance(p.attendance || 100); setTraining(p.training || 100); setTasks(p.tasks || 100); setDiscipline(p.discipline || 100);
-                      setIsFormOpen(true);
-                    }} className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-                    <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800 font-medium">Delete</button>
-                  </>
-                ) : (
-                  <span className="text-stone-400 text-xs italic">View Only</span>
-                )}
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full bg-white rounded-xl shadow-md mb-8 responsive-table">
+          <thead>
+            <tr className="border-b">
+              <th className="p-4 text-left">Name</th>
+              <th className="p-4 text-left">Rank</th>
+              <th className="p-4 text-left">Branch</th>
+              <th className="p-4 text-left">Department</th>
+              <th className="p-4 text-left">Status</th>
+              <th className="p-4 text-left">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredPersonnel.map(p => (
+              <tr key={p.id} className="border-b hover:bg-stone-50">
+                <td className="p-4" data-label="Name">{p.name}</td>
+                <td className="p-4" data-label="Rank">{p.rank}</td>
+                <td className="p-4" data-label="Branch">{p.branch}</td>
+                <td className="p-4" data-label="Department">{p.department}</td>
+                <td className="p-4" data-label="Status">{p.status}</td>
+                <td className="p-4 flex gap-2 actions" data-label="Actions">
+                  {canEditRecord(p) ? (
+                    <>
+                      <button onClick={() => { 
+                        setEditingId(p.id); setName(p.name); setRank(p.rank); setBranch(p.branch); setDepartment(p.department); setSupervisorId(p.supervisorId || ''); setStatus(p.status);
+                        setAttendance(p.attendance || 100); setTraining(p.training || 100); setTasks(p.tasks || 100); setDiscipline(p.discipline || 100);
+                        setIsFormOpen(true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }} className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                      <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                    </>
+                  ) : (
+                    <span className="text-stone-400 text-xs italic">View Only</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <h2 className="text-2xl font-bold mb-4">Chain of Command</h2>
       <div className="bg-white p-6 rounded-xl shadow-md">

@@ -34,8 +34,8 @@ export const Dashboard = () => {
   const lowReadiness = units.filter(u => u.readinessScore < 70);
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Welcome, {userData?.name}</h1>
+    <div className="p-4 md:p-8">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6">Welcome, {userData?.name}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-stone-900">

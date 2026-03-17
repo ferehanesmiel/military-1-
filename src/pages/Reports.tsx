@@ -39,50 +39,54 @@ export const Reports = () => {
   const canExport = userData?.role !== 'staff';
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Reports & Export</h1>
+    <div className="p-4 md:p-8">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6">Reports & Export</h1>
       <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm">
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full md:w-auto">
           <label className="text-sm font-bold text-stone-600 mb-1">Report Type</label>
-          <select value={reportType} onChange={e => setReportType(e.target.value)} className="p-2 border rounded">
+          <select value={reportType} onChange={e => setReportType(e.target.value)} className="p-2 border rounded w-full">
             <option value="personnel">Personnel</option>
             <option value="units">Units</option>
             <option value="materials">Materials</option>
           </select>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full md:w-auto">
           <label className="text-sm font-bold text-stone-600 mb-1">Branch</label>
-          <input placeholder="Branch" value={filters.branch} onChange={e => setFilters({...filters, branch: e.target.value})} className="p-2 border rounded" />
+          <input placeholder="Branch" value={filters.branch} onChange={e => setFilters({...filters, branch: e.target.value})} className="p-2 border rounded w-full" />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full md:w-auto">
           <label className="text-sm font-bold text-stone-600 mb-1">Department</label>
-          <input placeholder="Department" value={filters.department} onChange={e => setFilters({...filters, department: e.target.value})} className="p-2 border rounded" />
+          <input placeholder="Department" value={filters.department} onChange={e => setFilters({...filters, department: e.target.value})} className="p-2 border rounded w-full" />
         </div>
-        <div className="flex flex-col justify-end">
-          <button onClick={generateReport} className="bg-stone-900 text-white p-2 rounded px-6">Generate Report</button>
+        <div className="flex flex-col justify-end w-full md:w-auto">
+          <button onClick={generateReport} className="bg-stone-900 text-white p-2 rounded px-6 w-full">Generate Report</button>
         </div>
         {canExport && data.length > 0 && (
-          <div className="flex flex-col justify-end gap-2 flex-row">
-            <button onClick={exportPDF} className="bg-blue-600 text-white p-2 rounded">Export PDF</button>
-            <button onClick={exportExcel} className="bg-green-600 text-white p-2 rounded">Export Excel</button>
+          <div className="flex flex-col md:flex-row justify-end gap-2 w-full md:w-auto">
+            <button onClick={exportPDF} className="bg-blue-600 text-white p-2 rounded flex-1 md:flex-none">Export PDF</button>
+            <button onClick={exportExcel} className="bg-green-600 text-white p-2 rounded flex-1 md:flex-none">Export Excel</button>
           </div>
         )}
       </div>
-      {loading ? <p>Loading...</p> : (
-        <table className="w-full bg-white rounded-xl shadow-md">
-          <thead>
-            <tr className="border-b">
-              {data.length > 0 && Object.keys(data[0]).map(key => <th key={key} className="p-4 text-left">{key}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, i) => (
-              <tr key={i} className="border-b">
-                {Object.values(item).map((val: any, j) => <td key={j} className="p-4">{String(val)}</td>)}
+      {loading ? <p className="text-center py-8">Loading...</p> : (
+        <div className="overflow-x-auto">
+          <table className="w-full bg-white rounded-xl shadow-md responsive-table">
+            <thead>
+              <tr className="border-b">
+                {data.length > 0 && Object.keys(data[0]).map(key => <th key={key} className="p-4 text-left">{key}</th>)}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((item, i) => (
+                <tr key={i} className="border-b">
+                  {Object.entries(item).map(([key, val]: [string, any], j) => (
+                    <td key={j} className="p-4" data-label={key}>{String(val)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

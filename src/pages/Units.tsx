@@ -88,9 +88,9 @@ export const Units = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Unit Management</h1>
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold">Unit Management</h1>
         {canEdit && !isFormOpen && (
           <button 
             onClick={() => setIsFormOpen(true)}
@@ -132,54 +132,57 @@ export const Units = () => {
         </div>
       )}
 
-      <table className="w-full bg-white rounded-xl shadow-md">
-        <thead>
-          <tr className="border-b">
-            <th className="p-4 text-left">Unit Name</th>
-            <th className="p-4 text-left">Branch</th>
-            <th className="p-4 text-left">Commander</th>
-            <th className="p-4 text-left">Personnel (Current/Req)</th>
-            <th className="p-4 text-left">Equipment</th>
-            <th className="p-4 text-left">Readiness</th>
-            <th className="p-4 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {units.map(u => (
-            <tr key={u.id} className="border-b hover:bg-stone-50">
-              <td className="p-4">{u.name}</td>
-              <td className="p-4">{u.branch || 'N/A'}</td>
-              <td className="p-4">{personnel.find(p => p.id === u.commanderId)?.name || 'N/A'}</td>
-              <td className="p-4">{u.personnelCount || 0} / {u.requiredPersonnel}</td>
-              <td className="p-4">{u.equipmentCount || 0}</td>
-              <td className="p-4">
-                <span className={`font-bold ${u.readinessScore > 80 ? 'text-green-600' : u.readinessScore > 60 ? 'text-yellow-600' : 'text-red-600'}`}>
-                  {u.readinessScore?.toFixed(2)}%
-                </span>
-              </td>
-              <td className="p-4 flex gap-2">
-                {canEditRecord(u) ? (
-                  <>
-                    <button onClick={() => { 
-                      setEditingId(u.id); 
-                      setName(u.name); 
-                      setBranch(u.branch || '');
-                      setCommanderId(u.commanderId || ''); 
-                      setPersonnelCount(u.personnelCount || 0);
-                      setEquipmentCount(u.equipmentCount || 0);
-                      setRequiredPersonnel(u.requiredPersonnel); 
-                      setIsFormOpen(true);
-                    }} className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-                    <button onClick={() => handleDelete(u.id)} className="text-red-600 hover:text-red-800 font-medium">Delete</button>
-                  </>
-                ) : (
-                  <span className="text-stone-400 text-xs italic">View Only</span>
-                )}
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full bg-white rounded-xl shadow-md responsive-table">
+          <thead>
+            <tr className="border-b">
+              <th className="p-4 text-left">Unit Name</th>
+              <th className="p-4 text-left">Branch</th>
+              <th className="p-4 text-left">Commander</th>
+              <th className="p-4 text-left">Personnel (Current/Req)</th>
+              <th className="p-4 text-left">Equipment</th>
+              <th className="p-4 text-left">Readiness</th>
+              <th className="p-4 text-left">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {units.map(u => (
+              <tr key={u.id} className="border-b hover:bg-stone-50">
+                <td className="p-4" data-label="Unit Name">{u.name}</td>
+                <td className="p-4" data-label="Branch">{u.branch || 'N/A'}</td>
+                <td className="p-4" data-label="Commander">{personnel.find(p => p.id === u.commanderId)?.name || 'N/A'}</td>
+                <td className="p-4" data-label="Personnel">{u.personnelCount || 0} / {u.requiredPersonnel}</td>
+                <td className="p-4" data-label="Equipment">{u.equipmentCount || 0}</td>
+                <td className="p-4" data-label="Readiness">
+                  <span className={`font-bold ${u.readinessScore > 80 ? 'text-green-600' : u.readinessScore > 60 ? 'text-yellow-600' : 'text-red-600'}`}>
+                    {u.readinessScore?.toFixed(2)}%
+                  </span>
+                </td>
+                <td className="p-4 flex gap-2 actions" data-label="Actions">
+                  {canEditRecord(u) ? (
+                    <>
+                      <button onClick={() => { 
+                        setEditingId(u.id); 
+                        setName(u.name); 
+                        setBranch(u.branch || '');
+                        setCommanderId(u.commanderId || ''); 
+                        setPersonnelCount(u.personnelCount || 0);
+                        setEquipmentCount(u.equipmentCount || 0);
+                        setRequiredPersonnel(u.requiredPersonnel); 
+                        setIsFormOpen(true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }} className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                      <button onClick={() => handleDelete(u.id)} className="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                    </>
+                  ) : (
+                    <span className="text-stone-400 text-xs italic">View Only</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

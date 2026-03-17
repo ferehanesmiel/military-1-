@@ -20,8 +20,8 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-stone-900">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl shadow-lg w-96">
+    <div className="flex items-center justify-center h-screen bg-stone-900 p-4">
+      <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-stone-900">Login</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 mb-4 border rounded" required />

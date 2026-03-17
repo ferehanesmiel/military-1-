@@ -77,9 +77,9 @@ export const Materials = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Materials & Logistics</h1>
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold">Materials & Logistics</h1>
         {canEdit && !isFormOpen && (
           <button 
             onClick={() => setIsFormOpen(true)}
@@ -127,52 +127,55 @@ export const Materials = () => {
         </div>
       )}
 
-      <table className="w-full bg-white rounded-xl shadow-md">
-        <thead>
-          <tr className="border-b">
-            <th className="p-4 text-left">Name</th>
-            <th className="p-4 text-left">Type</th>
-            <th className="p-4 text-left">Quantity</th>
-            <th className="p-4 text-left">Unit</th>
-            <th className="p-4 text-left">Condition</th>
-            <th className="p-4 text-left">Location</th>
-            <th className="p-4 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {materials.map(m => (
-            <tr key={m.id} className={`border-b hover:bg-stone-50 ${m.quantity < 5 ? 'bg-red-50' : ''} ${m.condition === 'Damaged' ? 'bg-orange-50' : ''}`}>
-              <td className="p-4">{m.name}</td>
-              <td className="p-4">{m.type}</td>
-              <td className="p-4">{m.quantity}</td>
-              <td className="p-4">{units.find(u => u.id === m.unitId)?.name || 'N/A'}</td>
-              <td className="p-4">{m.condition}</td>
-              <td className="p-4">{m.location}</td>
-              <td className="p-4 flex gap-2">
-                {canEditRecord(m) ? (
-                  <>
-                    <button onClick={() => { 
-                      setEditingId(m.id); 
-                      setName(m.name); 
-                      setType(m.type); 
-                      setQuantity(m.quantity); 
-                      setAssignedTo(m.assignedTo || ''); 
-                      setUnitId(m.unitId || '');
-                      setCondition(m.condition); 
-                      setLocation(m.location); 
-                      setLastMaintenance(m.lastMaintenance || ''); 
-                      setIsFormOpen(true);
-                    }} className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-                    <button onClick={() => handleDelete(m.id)} className="text-red-600 hover:text-red-800 font-medium">Delete</button>
-                  </>
-                ) : (
-                  <span className="text-stone-400 text-xs italic">View Only</span>
-                )}
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full bg-white rounded-xl shadow-md responsive-table">
+          <thead>
+            <tr className="border-b">
+              <th className="p-4 text-left">Name</th>
+              <th className="p-4 text-left">Type</th>
+              <th className="p-4 text-left">Quantity</th>
+              <th className="p-4 text-left">Unit</th>
+              <th className="p-4 text-left">Condition</th>
+              <th className="p-4 text-left">Location</th>
+              <th className="p-4 text-left">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {materials.map(m => (
+              <tr key={m.id} className={`border-b hover:bg-stone-50 ${m.quantity < 5 ? 'bg-red-50' : ''} ${m.condition === 'Damaged' ? 'bg-orange-50' : ''}`}>
+                <td className="p-4" data-label="Name">{m.name}</td>
+                <td className="p-4" data-label="Type">{m.type}</td>
+                <td className="p-4" data-label="Quantity">{m.quantity}</td>
+                <td className="p-4" data-label="Unit">{units.find(u => u.id === m.unitId)?.name || 'N/A'}</td>
+                <td className="p-4" data-label="Condition">{m.condition}</td>
+                <td className="p-4" data-label="Location">{m.location}</td>
+                <td className="p-4 flex gap-2 actions" data-label="Actions">
+                  {canEditRecord(m) ? (
+                    <>
+                      <button onClick={() => { 
+                        setEditingId(m.id); 
+                        setName(m.name); 
+                        setType(m.type); 
+                        setQuantity(m.quantity); 
+                        setAssignedTo(m.assignedTo || ''); 
+                        setUnitId(m.unitId || '');
+                        setCondition(m.condition); 
+                        setLocation(m.location); 
+                        setLastMaintenance(m.lastMaintenance || ''); 
+                        setIsFormOpen(true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }} className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                      <button onClick={() => handleDelete(m.id)} className="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                    </>
+                  ) : (
+                    <span className="text-stone-400 text-xs italic">View Only</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
