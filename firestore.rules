@@ -60,8 +60,9 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-         request.auth.token.email == "esmielferehan@gmail.com");
+        (request.auth.token.email == "esmielferehan@gmail.com" ||
+         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
     }
 
     function isCommander() {
@@ -120,20 +121,20 @@ service cloud.firestore {
     }
 
     match /personnel/{personnelId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow create: if (isAdmin() || isCommander()) && isValidPersonnel(request.resource.data);
       allow update: if (isAdmin() || isCommander() || isOfficer()) && isValidPersonnel(request.resource.data);
       allow delete: if isAdmin();
     }
 
     match /units/{unitId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow create, update: if (isAdmin() || isCommander());
       allow delete: if isAdmin();
     }
 
     match /materials/{materialId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow create, update: if (isAdmin() || isCommander() || isOfficer()) && isValidMaterial(request.resource.data);
       allow delete: if isAdmin();
     }

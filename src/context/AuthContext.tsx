@@ -20,21 +20,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const userRef = doc(db, 'users', currentUser.uid);
-        const userDoc = await getDoc(userRef);
-        
-        if (userDoc.exists()) {
-          setUserData(userDoc.data());
-        } else {
-          // Create default user document if it doesn't exist
-          const defaultData = {
+        try {
+          const userRef = doc(db, 'users', currentUser.uid);
+          const userDoc = await getDoc(userRef);
+          
+          if (userDoc.exists()) {
+            setUserData(userDoc.data());
+          } else {
+            // Create default user document if it doesn't exist
+            const defaultData = {
+              uid: currentUser.uid,
+              email: currentUser.email,
+              role: currentUser.email === 'esmielferehan@gmail.com' ? 'admin' : 'staff',
+              name: currentUser.displayName || 'New User'
+            };
+            try {
+              await setDoc(userRef, defaultData);
+              setUserData(defaultData);
+            } catch (err) {
+              console.error("Error creating user document:", err);
+              // Fallback to local data if setDoc fails
+              setUserData(defaultData);
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching user document:", err);
+          setUserData({
             uid: currentUser.uid,
             email: currentUser.email,
             role: currentUser.email === 'esmielferehan@gmail.com' ? 'admin' : 'staff',
             name: currentUser.displayName || 'New User'
-          };
-          await setDoc(userRef, defaultData);
-          setUserData(defaultData);
+          });
         }
       } else {
         setUserData(null);
