@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "User's full name." },
+        "email": { "type": "string", "description": "User's email address." },
+        "role": { "type": "string", "enum": ["admin", "commander", "officer", "staff"], "description": "User's role." },
+        "rank": { "type": "string", "description": "User's rank." },
+        "branchId": { "type": "string", "description": "ID of the military branch." },
+        "departmentId": { "type": "string", "description": "ID of the department." },
+        "reportsTo": { "type": "string", "description": "User ID of the superior." }
+      },
+      "required": ["name", "email", "role", "rank"]
+    },
+    "Personnel": {
+      "title": "Personnel",
+      "description": "Military personnel information.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Personnel's full name." },
+        "rank": { "type": "string", "description": "Personnel's rank." },
+        "branch": { "type": "string", "description": "Personnel's branch." },
+        "department": { "type": "string", "description": "Personnel's department." },
+        "supervisorId": { "type": "string", "description": "ID of the supervisor." },
+        "userId": { "type": "string", "description": "ID of the linked user." },
+        "allSupervisors": { "type": "array", "items": { "type": "string" }, "description": "Array of all supervisor IDs in the chain." },
+        "status": { "type": "string", "description": "Personnel's status." }
+      },
+      "required": ["name", "rank", "branch", "department", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "User profile documents."
+    },
+    "/personnel/{personnelId}": {
+      "schema": { "$ref": "Personnel" },
+      "description": "Personnel documents."
+    }
+  }
+}

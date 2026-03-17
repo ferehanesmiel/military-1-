@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId (Firebase Auth UID)
+    // Fields:
+    //   - name: string (required, < 50 chars) - User's name
+    //   - email: string (required, valid email) - User's email
+    //   - role: string (required, enum: ['admin', 'commander', 'officer', 'staff']) - User's role
+    //   - rank: string (required, < 50 chars) - User's rank
+    //   - branchId: string (optional, < 50 chars) - Branch ID
+    //   - departmentId: string (optional, < 50 chars) - Department ID
+    //   - reportsTo: string (optional, < 50 chars) - Superior UID
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         request.auth.token.email == "esmielferehan@gmail.com");
+    }
+
+    function isCommander() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'commander';
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['name', 'email', 'role', 'rank']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 50 &&
+             data.email is string && data.email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") &&
+             data.role in ['admin', 'commander', 'officer', 'staff'] &&
+             data.rank is string && data.rank.size() > 0 && data.rank.size() < 50 &&
+             (data.branchId is string ? data.branchId.size() < 50 : true) &&
+             (data.departmentId is string ? data.departmentId.size() < 50 : true) &&
+             (data.reportsTo is string ? data.reportsTo.size() < 50 : true);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /personnel/{personnelId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || request.auth.uid in resource.data.allSupervisors || isAdmin());
+      allow create: if isAuthenticated() && (isAdmin() || isCommander());
+      allow update: if isAuthenticated() && (isAdmin() || (request.auth.uid == resource.data.userId));
+      allow delete: if isAdmin();
+    }
+  }
+}
